@@ -1,0 +1,1301 @@
+<apex:page controller="GoogleDriveTestHarnessController"
+	id="page" docType="html-5.0" tabStyle="Google_Drive_Test_Harness__tab">
+
+	<script language="javascript">
+	    <!-- Collapse PageBlockSection on Page Load-->
+	    
+	    function addLoadEvent(func) 
+	    {
+	    	var oldonload = window.onload;
+	      	if (typeof window.onload != 'function') 
+	      	{
+	        	window.onload = func;
+	      	} 
+	      	else 
+	      	{
+	        	window.onload = function() 
+	        	{
+	          		if (oldonload) 
+	          		{
+	            		oldonload();
+	          		}
+	          	
+	          		func();
+	        	}
+	      	}
+	    }
+	 
+	    function minimiseAll() 
+	    {
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdriveabout'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdriveapps'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivechanges'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivechildren'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivecomments'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivefiles'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivefiles:gdrivefilescopy'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivefiles:gdrivefilesinsert'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivefiles:gdrivefilesupdate'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdriveparents'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivepermissions'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivepermissions:gdrivepermissionsinsert'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivepermissions:gdrivepermissionsupdate'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdriveproperties'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdrivereplies'));
+	    	minimise(document.getElementById('page:mainForm:mainBlock:gdriverevisions'));
+	    }
+	    
+	    function minimise(element)
+	    {
+	    	if (element != null)
+	    	{
+	    		twistSection(element.childNodes[0].childNodes[0]);
+	    	}
+	    }
+	 
+	    addLoadEvent(minimiseAll);
+	</script>
+
+	<apex:form id="mainForm">
+		<apex:pageblock id="mainBlock" title="Google Drive API Test Harness">
+			<apex:pageBlockSection columns="1" collapsible="false">
+				<apex:outputText>
+					This page allows all the Google Drive API calls to be tested. 
+					It requires an authenticated Google Drive connector (with the connector type name 'Google Drive API') to function correctly.
+				</apex:outputText>
+			</apex:pageBlockSection>
+			
+			<apex:pageBlockSection id="messages" title="Callout Details"
+				columns="1" collapsible="true">
+				<apex:pagemessages />
+			</apex:pageBlockSection>
+
+			<!-- Files API Calls -->
+			<apex:actionRegion id="gdrivefilesactionregion">
+				<apex:pageBlockSection id="gdrivefiles" title="Files" columns="1"
+					collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/files">
+	                    https://developers.google.com/drive/v2/reference/files
+	                </apex:outputLink>
+
+					<apex:actionRegion>
+						<apex:pageBlockSection columns="2" collapsible="false">
+
+							<!-- Files Get Call -->
+							<apex:pageBlockSection id="gdrivefilesget" title="GET"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/get">
+			                    	https://developers.google.com/drive/v2/reference/files/get
+			                    </apex:outputLink>
+								<apex:inputText label="File Id" value="{!filesGetRequestId}" />
+								<apex:inputCheckbox label="Update Viewed Date"
+									value="{!filesGetRequestUpdateViewedDate}" />
+								<apex:inputText label="Fields" value="{!filesGetRequestFields}" />
+								<apex:commandButton value="Submit" action="{!filesGetRequest}"
+									rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files List Call -->
+							<apex:pageBlockSection id="gdrivefileslist" title="LIST"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/list">
+	                    			https://developers.google.com/drive/v2/reference/files/list
+	                    		</apex:outputLink>
+								<apex:selectRadio label="Corpus"
+									value="{!filesListRequestCorpus}">
+									<apex:selectOptions value="{!fileDomainTypes}" />
+								</apex:selectRadio>
+								<apex:inputText label="Max Results"
+									value="{!filesListRequestMaxResults}" />
+								<apex:inputText label="Page Token"
+									value="{!filesListRequestPageToken}" />
+								<apex:inputText label="Q" value="{!filesListRequestQ}" />
+								<apex:inputText label="Fields" value="{!filesListRequestFields}" />
+								<apex:commandButton value="Submit" action="{!filesListRequest}"
+									rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Delete Call -->
+							<apex:pageBlockSection id="gdrivefilesdelete" title="DELETE"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/delete">
+			                    	https://developers.google.com/drive/v2/reference/files/delete
+			                    </apex:outputLink>
+								<apex:inputText label="File Id" value="{!filesDeleteRequestId}" />
+								<apex:inputText label="Fields"
+									value="{!filesDeleteRequestFields}" />
+								<apex:commandButton value="Submit"
+									action="{!filesDeleteRequest}" rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Touch Call -->
+							<apex:pageBlockSection id="gdrivefilestouch" title="TOUCH"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/touch">
+			                    	https://developers.google.com/drive/v2/reference/files/touch
+			                    </apex:outputLink>
+								<apex:inputText label="File Id" value="{!filesTouchRequestId}" />
+								<apex:inputText label="Fields"
+									value="{!filesTouchRequestFields}" />
+								<apex:commandButton value="Submit" action="{!filesTouchRequest}"
+									rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Trash Call -->
+							<apex:pageBlockSection id="gdrivefilestrash" title="TRASH"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/trash">
+			                    	https://developers.google.com/drive/v2/reference/files/trash
+			                    </apex:outputLink>
+								<apex:inputText label="File Id" value="{!filesTrashRequestId}" />
+								<apex:inputText label="Fields"
+									value="{!filesTrashRequestFields}" />
+								<apex:commandButton value="Submit" action="{!filesTrashRequest}"
+									rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Untrash Call -->
+							<apex:pageBlockSection id="gdrivefilesuntrash" title="UNTRASH"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/trash">
+			                    	https://developers.google.com/drive/v2/reference/files/trash
+			                    </apex:outputLink>
+								<apex:inputText label="File Id" value="{!filesUntrashRequestId}" />
+								<apex:inputText label="Fields"
+									value="{!filesUntrashRequestFields}" />
+								<apex:commandButton value="Submit"
+									action="{!filesUntrashRequest}" rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Watch Call -->
+							<apex:pageBlockSection id="gdrivefileswatch" title="WATCH"
+								columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/watch">
+		                    		https://developers.google.com/drive/v2/reference/files/watch
+		                   	 	</apex:outputLink>
+								<apex:inputText label="File Id"
+									value="{!filesWatchRequestFileId}" />
+								<apex:inputText label="Id" value="{!filesWatchRequestId}" />
+								<apex:inputText label="Token" value="{!filesWatchRequestToken}" />
+								<apex:input label="Expiration" type="number"
+									value="{!filesWatchRequestExpiration}" />
+								<apex:inputText label="Type" value="{!filesWatchRequestType}" />
+								<apex:inputText label="Address"
+									value="{!filesWatchRequestAddress}" />
+								<apex:inputText label="Fields"
+									value="{!filesWatchRequestFields}" />
+								<apex:commandButton value="Submit" action="{!filesWatchRequest}"
+									rerender="messages" />
+							</apex:pageBlockSection>
+
+							<!-- Files Empty Trash Call -->
+							<apex:pageBlockSection id="gdrivefilesemptytrash"
+								title="EMPTY TRASH" columns="1" collapsible="false">
+								<apex:outputLink
+									value="https://developers.google.com/drive/v2/reference/files/emptyTrash">
+			                    	https://developers.google.com/drive/v2/reference/files/emptyTrash
+			                    </apex:outputLink>
+								<apex:commandButton value="Submit"
+									action="{!filesEmptyTrashRequest}" rerender="messages" />
+							</apex:pageBlockSection>
+						</apex:pageBlockSection>
+					</apex:actionRegion>
+
+					<!-- Files Copy Call -->
+					<apex:actionRegion>
+						<apex:pageBlockSection id="gdrivefilescopy" title="COPY"
+							columns="2" collapsible="true">
+							<apex:outputLink
+								value="https://developers.google.com/drive/v2/reference/files/copy">
+	                    	https://developers.google.com/drive/v2/reference/files/copy
+	                    </apex:outputLink>
+							<apex:pageBlockSectionItem />
+
+							<apex:pageBlockSection title="Parameters" columns="1"
+								collapsible="false">
+								<apex:inputText label="File Id" value="{!filesCopyRequestId}" />
+								<apex:inputCheckbox label="Convert"
+									value="{!filesCopyRequestConvert}" />
+								<apex:inputCheckbox label="Ocr" value="{!filesCopyRequestOcr}" />
+								<apex:inputText label="Ocr Language"
+									value="{!filesCopyRequestOcrLanguage}" />
+								<apex:inputCheckbox label="Pinned"
+									value="{!filesCopyRequestPinned}" />
+								<apex:inputText label="Timed Text Language"
+									value="{!filesCopyRequestTimedTextLanguage}" />
+								<apex:inputText label="Timed Text TrackName"
+									value="{!filesCopyRequestTimedTextTrackName}" />
+								<apex:selectRadio label="Visibility"
+									value="{!filesCopyRequestVisibility}">
+									<apex:selectOptions value="{!fileVisibilityTypes}" />
+								</apex:selectRadio>
+								<apex:inputText label="Fields" value="{!filesCopyRequestFields}" />
+							</apex:pageBlockSection>
+
+							<apex:pageBlockSection title="Request Body Parameters"
+								columns="1" collapsible="false">
+								<apex:inputText label="Description"
+									value="{!filesCopyRequestDescription}" />
+								<apex:inputText label="Title" value="{!filesCopyRequestTitle}" />
+								<apex:inputText label="Mime Type"
+									value="{!filesCopyRequestMimeType}" />
+								<apex:inputText label="Indexable Text"
+									value="{!filesCopyRequestIndexableText}" />
+								<apex:inputCheckbox label="Restricted"
+									value="{!filesCopyRequestLabelsRestricted}" />
+								<apex:inputCheckbox label="Starred"
+									value="{!filesCopyRequestLabelsStarred}" />
+								<apex:inputCheckbox label="Trashed"
+									value="{!filesCopyRequestLabelsTrashed}" />
+								<apex:inputCheckbox label="Viewed"
+									value="{!filesCopyRequestLabelsViewed}" />
+								<apex:input type="datetime" label="Last Viewed By Me Date"
+									value="{!filesCopyRequestLastViewedByMeDate}" />
+								<apex:input type="datetime" label="Marked Viewed By Me Date"
+									value="{!filesCopyRequestMarkedViewedByMeDate}" />
+								<apex:input type="datetime" label="Modified Date"
+									value="{!filesCopyRequestModifiedDate}" />
+								<apex:inputCheckbox label="Writers Can Share"
+									value="{!filesCopyRequestWritersCanShare}" />
+							</apex:pageBlockSection>
+
+							<apex:commandButton value="Submit" action="{!filesCopyRequest}"
+								rerender="messages" />
+						</apex:pageBlockSection>
+					</apex:actionRegion>
+
+					<!-- Files Insert Call -->
+					<apex:pageBlockSection id="gdrivefilesinsert" title="INSERT"
+						columns="2" collapsible="true">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/files/insert">
+	                    	https://developers.google.com/drive/v2/reference/files/insert
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+
+						<apex:pageBlockSection title="Parameters" columns="1"
+							collapsible="false">
+							<apex:inputCheckbox label="Convert"
+								value="{!filesInsertRequestConvert}" />
+							<apex:inputCheckbox label="Ocr" value="{!filesInsertRequestOcr}" />
+							<apex:inputText label="Ocr Language"
+								value="{!filesInsertRequestOcrLanguage}" />
+							<apex:inputCheckbox label="Pinned"
+								value="{!filesInsertRequestPinned}" />
+							<apex:inputText label="Timed Text Language"
+								value="{!filesInsertRequestTimedTextLanguage}" />
+							<apex:inputText label="Timed Text TrackName"
+								value="{!filesInsertRequestTimedTextTrackName}" />
+							<apex:inputCheckbox label="Use Content As Indexable Text"
+								value="{!filesInsertRequestUseContentAsIndexableText}" />
+							<apex:selectRadio label="Visibility"
+								value="{!filesInsertRequestVisibility}">
+								<apex:selectOptions value="{!fileVisibilityTypes}" />
+							</apex:selectRadio>
+							<apex:inputText label="Fields"
+								value="{!filesInsertRequestFields}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Request Body Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="Description"
+								value="{!filesInsertRequestDescription}" />
+							<apex:inputText label="Title" value="{!filesInsertRequestTitle}" />
+							<apex:inputText label="Mime Type"
+								value="{!filesInsertRequestMimeType}" />
+							<apex:inputText label="Indexable Text"
+								value="{!filesInsertRequestIndexableText}" />
+							<apex:inputCheckbox label="Restricted"
+								value="{!filesInsertRequestLabelsRestricted}" />
+							<apex:inputCheckbox label="Starred"
+								value="{!filesInsertRequestLabelsStarred}" />
+							<apex:inputCheckbox label="Trashed"
+								value="{!filesInsertRequestLabelsTrashed}" />
+							<apex:inputCheckbox label="Viewed"
+								value="{!filesInsertRequestLabelsViewed}" />
+							<apex:input type="datetime" label="Last Viewed By Me Date"
+								value="{!filesInsertRequestLastViewedByMeDate}" />
+							<apex:input type="datetime" label="Marked Viewed By Me Date"
+								value="{!filesInsertRequestMarkedViewedByMeDate}" />
+							<apex:input type="datetime" label="Modified Date"
+								value="{!filesInsertRequestModifiedDate}" />
+							<apex:inputCheckbox label="Writers Can Share"
+								value="{!filesInsertRequestWritersCanShare}" />
+						</apex:pageBlockSection>
+
+						<apex:inputFile value="{!filesInsertRequestFileBody}" />
+
+						<apex:commandButton value="Submit" action="{!filesInsertRequest}" />
+					</apex:pageBlockSection>
+
+					<!-- Files Update Call -->
+					<apex:pageBlockSection id="gdrivefilesupdate" title="UPDATE"
+						columns="2" collapsible="true">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/files/update">
+	                    	https://developers.google.com/drive/v2/reference/files/update
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+
+						<apex:pageBlockSection title="Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="Id" value="{!filesUpdateRequestFileId}" />
+							<apex:inputText label="Add Parents"
+								value="{!filesUpdateRequestAddParents}" />
+							<apex:inputCheckbox label="Convert"
+								value="{!filesUpdateRequestConvert}" />
+							<apex:inputCheckbox label="New Revision"
+								value="{!filesUpdateRequestNewRevision}" />
+							<apex:inputCheckbox label="Ocr" value="{!filesUpdateRequestOcr}" />
+							<apex:inputText label="Ocr Language"
+								value="{!filesUpdateRequestOcrLanguage}" />
+							<apex:inputCheckbox label="Pinned"
+								value="{!filesUpdateRequestPinned}" />
+							<apex:inputText label="Remove Parents"
+								value="{!filesUpdateRequestRemoveParents}" />
+							<apex:inputCheckbox label="Set Modified Date"
+								value="{!filesUpdateRequestSetModifiedDate}" />
+							<apex:inputText label="Timed Text Language"
+								value="{!filesUpdateRequestTimedTextLanguage}" />
+							<apex:inputText label="Timed Text TrackName"
+								value="{!filesUpdateRequestTimedTextTrackName}" />
+							<apex:inputCheckbox label="Update Viewed Date"
+								value="{!filesUpdateRequestUpdateViewedDate}" />
+							<apex:inputCheckbox label="Use Content As Indexable Text"
+								value="{!filesUpdateRequestUseContentAsIndexableText}" />
+							<apex:inputText label="Fields"
+								value="{!filesUpdateRequestFields}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Request Body Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="Description"
+								value="{!filesUpdateRequestDescription}" />
+							<apex:inputText label="Title" value="{!filesUpdateRequestTitle}" />
+							<apex:inputText label="Mime Type"
+								value="{!filesUpdateRequestMimeType}" />
+							<apex:inputText label="Indexable Text"
+								value="{!filesUpdateRequestIndexableText}" />
+							<apex:inputCheckbox label="Restricted"
+								value="{!filesUpdateRequestLabelsRestricted}" />
+							<apex:inputCheckbox label="Starred"
+								value="{!filesUpdateRequestLabelsStarred}" />
+							<apex:inputCheckbox label="Trashed"
+								value="{!filesUpdateRequestLabelsTrashed}" />
+							<apex:inputCheckbox label="Viewed"
+								value="{!filesUpdateRequestLabelsViewed}" />
+							<apex:input type="datetime" label="Last Viewed By Me Date"
+								value="{!filesUpdateRequestLastViewedByMeDate}" />
+							<apex:input type="datetime" label="Marked Viewed By Me Date"
+								value="{!filesUpdateRequestMarkedViewedByMeDate}" />
+							<apex:input type="datetime" label="Modified Date"
+								value="{!filesUpdateRequestModifiedDate}" />
+							<apex:inputCheckbox label="Writers Can Share"
+								value="{!filesUpdateRequestWritersCanShare}" />
+						</apex:pageBlockSection>
+
+						<apex:inputFile value="{!filesUpdateRequestFileBody}" />
+
+						<apex:commandButton value="Submit" action="{!filesUpdateRequest}" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- About API Calls -->
+			<apex:actionRegion id="gdriveaboutactionregion">
+				<apex:pageBlockSection id="gdriveabout" title="About" columns="1"
+					collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/about">
+	                     https://developers.google.com/drive/v2/reference/about
+	                </apex:outputLink>
+
+					<!-- About Get Call -->
+					<apex:pageBlockSection id="gdriveaboutget" title="GET" columns="2"
+						collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/about/get">
+	                    	https://developers.google.com/drive/v2/reference/about/get
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+						<apex:input label="Max Change Id Count" type="number"
+							value="{!aboutGetRequestMaxChangeIdCount}" />
+						<apex:input label="Start Change Id" type="number"
+							value="{!aboutGetRequestStartChangeId}" />
+						<apex:inputCheckbox label="IncludeSubscribed"
+							value="{!aboutGetRequestIncludeSubscribed}" />
+						<apex:inputText label="Fields" value="{!aboutGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!aboutGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Changes API Calls -->
+			<apex:actionRegion id="gdrivechangesactionregion">
+				<apex:pageBlockSection id="gdrivechanges" title="Changes"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/changes">
+	                     https://developers.google.com/drive/v2/reference/changes
+	                </apex:outputLink>
+					<apex:pageBlockSection />
+
+					<!-- Changes Get Call -->
+					<apex:pageBlockSection id="gdrivechangesget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/changes/get">
+	                    	https://developers.google.com/drive/v2/reference/changes/get
+	                    </apex:outputLink>
+						<apex:inputText label="Change Id"
+							value="{!changesGetRequestChangeId}" />
+						<apex:inputText label="Fields" value="{!changesGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!changesGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+					<apex:pageBlockSection />
+
+					<!-- Changes List Call -->
+					<apex:pageBlockSection id="gdrivechangeslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/changes/list">
+                    	https://developers.google.com/drive/v2/reference/changes/list
+                    </apex:outputLink>
+						<apex:inputCheckbox label="IncludeDeleted"
+							value="{!changesListRequestIncludeDeleted}" />
+						<apex:inputCheckbox label="IncludeSubscribed"
+							value="{!changesListRequestIncludeSubscribed}" />
+						<apex:input label="Max Results" type="number"
+							value="{!changesListRequestMaxResults}" />
+						<apex:inputText label="Page Token"
+							value="{!changesListRequestPageToken}" />
+						<apex:input label="Start Change Id" type="number"
+							value="{!changesListRequestStartChangeId}" />
+						<apex:inputText label="Fields" value="{!changesListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!changesListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Changes Watch Call -->
+					<apex:pageBlockSection id="gdrivechangeswatch" title="WATCH"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/changes/watch">
+                    	https://developers.google.com/drive/v2/reference/changes/watch
+                    </apex:outputLink>
+						<apex:inputText label="Id" value="{!changesWatchRequestId}" />
+						<apex:inputText label="Token" value="{!changesWatchRequestToken}" />
+						<apex:input label="Expiration" type="number"
+							value="{!changesWatchRequestExpiration}" />
+						<apex:inputText label="Type" value="{!changesWatchRequestType}" />
+						<apex:inputText label="Address"
+							value="{!changesWatchRequestAddress}" />
+						<apex:inputText label="Fields"
+							value="{!changesWatchRequestFields}" />
+						<apex:commandButton value="Submit" action="{!changesWatchRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Children API Calls -->
+			<apex:actionRegion id="gdrivechildrenactionregion">
+				<apex:pageBlockSection id="gdrivechildren" title="Children"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/children">
+	                    https://developers.google.com/drive/v2/reference/children
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Children Delete Call -->
+					<apex:pageBlockSection id="gdrivechildrendelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/children/delete">
+	                    	https://developers.google.com/drive/v2/reference/children/delete
+	                    </apex:outputLink>
+						<apex:inputText label="Folder Id"
+							value="{!childrenDeleteRequestFolderId}" />
+						<apex:inputText label="Child Id"
+							value="{!childrenDeleteRequestChildId}" />
+						<apex:inputText label="Fields"
+							value="{!childrenDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!childrenDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Children Get Call -->
+					<apex:pageBlockSection id="gdrivechildrenget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/children/get">
+	                    	https://developers.google.com/drive/v2/reference/children/get
+	                    </apex:outputLink>
+						<apex:inputText label="Folder Id"
+							value="{!childrenGetRequestFolderId}" />
+						<apex:inputText label="Child Id"
+							value="{!childrenGetRequestChildId}" />
+						<apex:inputText label="Fields" value="{!childrenGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!childrenGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Children Insert Call -->
+					<apex:pageBlockSection id="gdrivechildreninsert" title="INSERT"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/children/insert">
+	                    	https://developers.google.com/drive/v2/reference/children/insert
+	                    </apex:outputLink>
+						<apex:inputText label="Folder Id"
+							value="{!childrenInsertRequestFolderId}" />
+						<apex:inputText label="Child Id"
+							value="{!childrenInsertRequestChildId}" />
+						<apex:inputText label="Self Link"
+							value="{!childrenInsertRequestSelfLink}" />
+						<apex:inputText label="Child Link"
+							value="{!childrenInsertRequestChildLink}" />
+						<apex:inputText label="Fields"
+							value="{!childrenInsertRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!childrenInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Children List Call -->
+					<apex:pageBlockSection id="gdrivechildrenlist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/children/list">
+	                    	https://developers.google.com/drive/v2/reference/children/list
+	                    </apex:outputLink>
+						<apex:inputText label="Folder Id"
+							value="{!childrenListRequestFolderId}" />
+						<apex:inputText label="Max Results"
+							value="{!childrenListRequestMaxResults}" />
+						<apex:inputText label="Page Token"
+							value="{!childrenListRequestPageToken}" />
+						<apex:inputText label="Q" value="{!childrenListRequestQ}" />
+						<apex:inputText label="Fields"
+							value="{!childrenListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!childrenListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Parents API Calls -->
+			<apex:actionRegion id="gdriveparentsactionregion">
+				<apex:pageBlockSection id="gdriveparents" title="Parents"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/parents">
+	                    https://developers.google.com/drive/v2/reference/parents
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Parents Delete Call -->
+					<apex:pageBlockSection id="gdriveparentsdelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/parents/delete">
+	                    	https://developers.google.com/drive/v2/reference/parents/delete
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!parentsDeleteRequestFileId}" />
+						<apex:inputText label="Parent Id"
+							value="{!parentsDeleteRequestParentId}" />
+						<apex:inputText label="Fields"
+							value="{!parentsDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!parentsDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Parents Get Call -->
+					<apex:pageBlockSection id="gdriveparentsget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/parents/get">
+	                    	https://developers.google.com/drive/v2/reference/parents/get
+	                    </apex:outputLink>
+						<apex:inputText label="File Id" value="{!parentsGetRequestFileId}" />
+						<apex:inputText label="Parent Id"
+							value="{!parentsGetRequestParentId}" />
+						<apex:inputText label="Fields" value="{!parentsGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!parentsGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Parents Insert Call -->
+					<apex:pageBlockSection id="gdriveparentsinsert" title="INSERT"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/parents/insert">
+	                    	https://developers.google.com/drive/v2/reference/parents/insert
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!parentsInsertRequestFileId}" />
+						<apex:inputText label="Parent Id"
+							value="{!parentsInsertRequestParentId}" />
+						<apex:inputText label="Fields"
+							value="{!parentsInsertRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!parentsInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Parents List Call -->
+					<apex:pageBlockSection id="gdriveparentslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/parents/list">
+	                    	https://developers.google.com/drive/v2/reference/parents/list
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!parentsListRequestFileId}" />
+						<apex:inputText label="Fields" value="{!parentsListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!parentsListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Permissions API Calls -->
+			<apex:actionRegion id="gdrivepermissionsactionregion">
+				<apex:pageBlockSection id="gdrivepermissions" title="Permissions"
+					columns="1" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/permissions">
+	                    https://developers.google.com/drive/v2/reference/permissions
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<apex:pageBlockSection columns="2" collapsible="false">
+
+						<!-- Permissions Delete Call -->
+						<apex:pageBlockSection id="gdrivepermissionsdelete" title="DELETE"
+							columns="1" collapsible="false">
+							<apex:outputLink
+								value="https://developers.google.com/drive/v2/reference/permissions/delete">
+	                    	https://developers.google.com/drive/v2/reference/permissions/delete
+	                    </apex:outputLink>
+							<apex:inputText label="File Id"
+								value="{!permissionsDeleteRequestFileId}" />
+							<apex:inputText label="Permission Id"
+								value="{!permissionsDeleteRequestPermissionId}" />
+							<apex:inputText label="Fields"
+								value="{!permissionsDeleteRequestFields}" />
+							<apex:commandButton value="Submit"
+								action="{!permissionsDeleteRequest}" rerender="messages" />
+						</apex:pageBlockSection>
+
+						<!-- Permissions Get Call -->
+						<apex:pageBlockSection id="gdrivepermissionsget" title="GET"
+							columns="1" collapsible="false">
+							<apex:outputLink
+								value="https://developers.google.com/drive/v2/reference/permissions/get">
+	                    	https://developers.google.com/drive/v2/reference/permissions/get
+	                    </apex:outputLink>
+							<apex:inputText label="File Id"
+								value="{!permissionsGetRequestFileId}" />
+							<apex:inputText label="Permission Id"
+								value="{!permissionsGetRequestPermissionId}" />
+							<apex:inputText label="Fields"
+								value="{!permissionsGetRequestFields}" />
+							<apex:commandButton value="Submit"
+								action="{!permissionsGetRequest}" rerender="messages" />
+						</apex:pageBlockSection>
+
+						<!-- Permissions List Call -->
+						<apex:pageBlockSection id="gdrivepermissionslist" title="LIST"
+							columns="1" collapsible="false">
+							<apex:outputLink
+								value="https://developers.google.com/drive/v2/reference/permissions/list">
+	                    		https://developers.google.com/drive/v2/reference/permissions/list
+	                    	</apex:outputLink>
+							<apex:inputText label="File Id"
+								value="{!permissionsListRequestFileId}" />
+							<apex:inputText label="Fields"
+								value="{!permissionsListRequestFields}" />
+							<apex:commandButton value="Submit"
+								action="{!permissionsListRequest}" rerender="messages" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection id="gdrivepermissionsgetidforemail"
+							title="GETIDFOREMAIL" columns="1" collapsible="false">
+							<apex:outputLink
+								value="https://developers.google.com/drive/v2/reference/permissions/getIdForEmail">
+	                    		https://developers.google.com/drive/v2/reference/permissions/getIdForEmail
+	                    	</apex:outputLink>
+							<apex:inputText label="Email"
+								value="{!permissionsGetIdForEmailRequestEmail}" />
+							<apex:commandButton value="Submit"
+								action="{!permissionsGetIdForEmailRequest}" rerender="messages" />
+						</apex:pageBlockSection>
+					</apex:pageBlockSection>
+
+					<!-- Permissions Insert Call -->
+					<apex:pageBlockSection id="gdrivepermissionsinsert" title="INSERT"
+						columns="2" collapsible="true">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/permissions/insert">
+	                    	https://developers.google.com/drive/v2/reference/permissions/insert
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+
+						<apex:pageBlockSection title="Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="File Id"
+								value="{!permissionsInsertRequestFileId}" />
+							<apex:inputText label="Email Message"
+								value="{!permissionsInsertRequestEmailMessage}" />
+							<apex:inputCheckbox label="Send Notification Emails"
+								value="{!permissionsInsertRequestSendNotificationEmails}" />
+							<apex:inputText label="Fields"
+								value="{!permissionsInsertRequestFields}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Request Body Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="Permission Id"
+								value="{!permissionsInsertRequestPermissionId}" />
+							<apex:inputText label="Value"
+								value="{!permissionsInsertRequestValue}" />
+							<apex:selectRadio label="Role"
+								value="{!permissionsInsertRequestRole}">
+								<apex:selectOptions value="{!permissionRoles}" />
+							</apex:selectRadio>
+							<apex:selectRadio label="Type"
+								value="{!permissionsInsertRequestType}">
+								<apex:selectOptions value="{!permissionTypes}" />
+							</apex:selectRadio>
+							<apex:selectCheckboxes label="Additional Roles"
+								value="{!permissionsInsertRequestAdditionalRoles}">
+								<apex:selectOptions value="{!permissionAdditionalRoles}" />
+							</apex:selectCheckboxes>
+							<apex:inputCheckbox label="With Link"
+								value="{!permissionsInsertRequestWithLink}" />
+						</apex:pageBlockSection>
+
+						<apex:commandButton value="Submit"
+							action="{!permissionsInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Permissions Update Call -->
+					<apex:pageBlockSection id="gdrivepermissionsupdate" title="UPDATE"
+						columns="2" collapsible="true">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/permissions/update">
+	                    	https://developers.google.com/drive/v2/reference/permissions/update
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+
+						<apex:pageBlockSection title="Parameters" columns="1"
+							collapsible="false">
+							<apex:inputText label="File Id"
+								value="{!permissionsUpdateRequestFileId}" />
+							<apex:inputText label="Permission Id"
+								value="{!permissionsUpdateRequestPermissionId}" />
+							<apex:inputCheckbox label="Transfer Ownership"
+								value="{!permissionsUpdateRequestTransferOwnership}" />
+							<apex:inputText label="Fields"
+								value="{!permissionsUpdateRequestFields}" />
+						</apex:pageBlockSection>
+
+						<apex:pageBlockSection title="Request Body Parameters" columns="1"
+							collapsible="false">
+							<apex:selectRadio label="Role"
+								value="{!permissionsUpdateRequestRole}">
+								<apex:selectOptions value="{!permissionRoles}" />
+							</apex:selectRadio>
+							<apex:selectCheckboxes label="Additional Roles"
+								value="{!permissionsUpdateRequestAdditionalRoles}">
+								<apex:selectOptions value="{!permissionAdditionalRoles}" />
+							</apex:selectCheckboxes>
+						</apex:pageBlockSection>
+
+						<apex:commandButton value="Submit"
+							action="{!permissionsUpdateRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Revisions API Calls -->
+			<apex:actionRegion id="gdriverevisionactionregion">
+				<apex:pageBlockSection id="gdriverevisions" title="Revisions"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/revisions">
+	                    https://developers.google.com/drive/v2/reference/revisions
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Revisions Delete Call -->
+					<apex:pageBlockSection id="gdriverevisionsdelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/revisions/delete">
+	                    	https://developers.google.com/drive/v2/reference/revisions/delete
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!revisionsDeleteRequestFileId}" />
+						<apex:inputText label="Revision Id"
+							value="{!revisionsDeleteRequestRevisionId}" />
+						<apex:inputText label="Fields"
+							value="{!revisionsDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!revisionsDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Revisions Get Call -->
+					<apex:pageBlockSection id="gdriverevisionsget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/revisions/get">
+	                    	https://developers.google.com/drive/v2/reference/revisions/get
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!revisionsGetRequestFileId}" />
+						<apex:inputText label="Revision Id"
+							value="{!revisionsGetRequestRevisionId}" />
+						<apex:inputText label="Fields"
+							value="{!revisionsGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!revisionsGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Revisions List Call -->
+					<apex:pageBlockSection id="gdriverevisionslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/revisions/list">
+	                    		https://developers.google.com/drive/v2/reference/revisions/list
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!revisionsListRequestFileId}" />
+						<apex:inputText label="Fields"
+							value="{!revisionsListRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!revisionsListRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Revisions Update Call -->
+					<apex:pageBlockSection id="gdriverevisionsupdate" title="UPDATE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/revisions/update">
+	                    		https://developers.google.com/drive/v2/reference/revisions/update
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!revisionsUpdateRequestFileId}" />
+						<apex:inputText label="Revision Id"
+							value="{!revisionsUpdateRequestRevisionId}" />
+						<apex:inputCheckBox label="Pinned"
+							value="{!revisionsUpdateRequestPinned}" />
+						<apex:inputCheckBox label="Published"
+							value="{!revisionsUpdateRequestPublished}" />
+						<apex:inputCheckBox label="Publish Auto"
+							value="{!revisionsUpdateRequestPublishAuto}" />
+						<apex:inputCheckBox label="Published Outside Domain"
+							value="{!revisionsUpdateRequestPublishedOutsideDomain}" />
+						<apex:inputText label="Fields"
+							value="{!revisionsUpdateRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!revisionsUpdateRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Apps API Calls -->
+			<apex:actionRegion id="gdriveappsactionregion">
+				<apex:pageBlockSection id="gdriveapps" title="Apps" columns="2"
+					collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/apps">
+	                     https://developers.google.com/drive/v2/reference/apps
+	                </apex:outputLink>
+					<apex:pageBlockSection />
+
+					<!-- Apps Get Call -->
+					<apex:pageBlockSection id="gdriveappsget" title="GET" columns="1"
+						collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/apps/get">
+	                    	https://developers.google.com/drive/v2/reference/apps/get
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+						<apex:inputText label="Id" value="{!appsGetRequestAppId}" />
+						<apex:inputText label="Fields" value="{!appsGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!appsGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Apps List Call -->
+					<apex:pageBlockSection id="gdriveappslist" title="LIST" columns="1"
+						collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/apps/list">
+	                    	https://developers.google.com/drive/v2/reference/apps/list
+	                    </apex:outputLink>
+						<apex:pageBlockSectionItem />
+
+						<apex:inputText label="App Filter Extensions"
+							value="{!appsListRequestAppFilterExtensions}" />
+						<apex:inputText label="App Filter Mime Types"
+							value="{!appsListRequestAppFilterMimeTypes}" />
+						<apex:inputText label="Language Code"
+							value="{!appsListRequestLanguageCode}" />
+
+						<apex:inputText label="Fields" value="{!appsListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!appsListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Comments API Calls -->
+			<apex:actionRegion id="gdrivecommentsactionregion">
+				<apex:pageBlockSection id="gdrivecomments" title="Comments"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/comments">
+	                    https://developers.google.com/drive/v2/reference/comments
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Comments Delete Call -->
+					<apex:pageBlockSection id="gdrivecommentsdelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/comments/delete">
+	                    	https://developers.google.com/drive/v2/reference/comments/delete
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!commentsDeleteRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!commentsDeleteRequestCommentId}" />
+						<apex:inputText label="Fields"
+							value="{!commentsDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!commentsDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Comments Get Call -->
+					<apex:pageBlockSection id="gdrivecommentsget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/comments/get">
+	                    	https://developers.google.com/drive/v2/reference/comments/get
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!commentsGetRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!commentsGetRequestCommentId}" />
+						<apex:inputCheckBox label="Include Deleted"
+							value="{!commentsGetRequestIncludeDeleted}" />
+						<apex:inputText label="Fields" value="{!commentsGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!commentsGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Comments Insert Call -->
+					<apex:pageBlockSection id="gdrivecommentsinsert" title="INSERT"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/comments/insert">
+	                    		https://developers.google.com/drive/v2/reference/comments/insert
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!commentsInsertRequestFileId}" />
+						<apex:inputTextArea label="Content" rows="3"
+							value="{!commentsInsertRequestContent}" />
+						<apex:inputText label="Context Type"
+							value="{!commentsInsertRequestContextType}" />
+						<apex:inputText label="Context Value"
+							value="{!commentsInsertRequestContextValue}" />
+						<apex:inputText label="Fields"
+							value="{!commentsInsertRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!commentsInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Comments List Call -->
+					<apex:pageBlockSection id="gdrivecommentslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/comments/list">
+	                    		https://developers.google.com/drive/v2/reference/comments/list
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!commentsListRequestFileId}" />
+						<apex:inputCheckbox label="Include Deleted"
+							value="{!commentsListRequestIncludeDeleted}" />
+						<apex:input label="Max Results" type="number"
+							value="{!commentsListRequestMaxResults}" />
+						<apex:inputText label="Page Token"
+							value="{!commentsListRequestPageToken}" />
+						<apex:inputText label="Updated Min"
+							value="{!commentsListRequestUpdatedMin}" />
+						<apex:inputText label="Fields"
+							value="{!commentsListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!commentsListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Comments Update Call -->
+					<apex:pageBlockSection id="gdrivecommentupdate" title="UPDATE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/comments/update">
+	                    		https://developers.google.com/drive/v2/reference/comments/update
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!commentsUpdateRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!commentsUpdateRequestCommentId}" />
+						<apex:inputTextArea label="Content" rows="3"
+							value="{!commentsUpdateRequestContent}" />
+						<apex:inputText label="Fields"
+							value="{!commentsUpdateRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!commentsUpdateRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Replies API Calls -->
+			<apex:actionRegion id="gdrivereplyactionregion">
+				<apex:pageBlockSection id="gdrivereplies" title="Replies"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/reply">
+	                    https://developers.google.com/drive/v2/reference/reply
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Replies Delete Call -->
+					<apex:pageBlockSection id="gdriverepliesdelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/replies/delete">
+	                    	https://developers.google.com/drive/v2/reference/replies/delete
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!repliesDeleteRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!repliesDeleteRequestCommentId}" />
+						<apex:inputText label="Reply Id"
+							value="{!repliesDeleteRequestReplyId}" />
+						<apex:inputText label="Fields"
+							value="{!repliesDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!repliesDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Replies Get Call -->
+					<apex:pageBlockSection id="gdriverepliesget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/replies/get">
+	                    	https://developers.google.com/drive/v2/reference/replies/get
+	                    </apex:outputLink>
+						<apex:inputText label="File Id" value="{!repliesGetRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!repliesGetRequestCommentId}" />
+						<apex:inputText label="Reply Id"
+							value="{!repliesGetRequestReplyId}" />
+						<apex:inputCheckBox label="Include Deleted"
+							value="{!repliesGetRequestIncludeDeleted}" />
+						<apex:inputText label="Fields" value="{!repliesGetRequestFields}" />
+						<apex:commandButton value="Submit" action="{!repliesGetRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Replies Insert Call -->
+					<apex:pageBlockSection id="gdriverepliesinsert" title="INSERT"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/replies/insert">
+	                    		https://developers.google.com/drive/v2/reference/replies/insert
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!repliesInsertRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!repliesInsertRequestCommentId}" />
+						<apex:inputTextArea label="Content" rows="3"
+							value="{!repliesInsertRequestContent}" />
+						<apex:selectRadio label="Verb" value="{!repliesInsertRequestVerb}">
+							<apex:selectOptions value="{!replyActions}" />
+						</apex:selectRadio>
+						<apex:inputText label="Fields"
+							value="{!repliesInsertRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!repliesInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Replies List Call -->
+					<apex:pageBlockSection id="gdrivereplieslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/replies/list">
+	                    		https://developers.google.com/drive/v2/reference/replies/list
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!repliesListRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!repliesListRequestCommentId}" />
+						<apex:inputCheckbox label="Include Deleted"
+							value="{!repliesListRequestIncludeDeleted}" />
+						<apex:input label="Max Results" type="number"
+							value="{!repliesListRequestMaxResults}" />
+						<apex:inputText label="Page Token"
+							value="{!repliesListRequestPageToken}" />
+						<apex:inputText label="Fields" value="{!repliesListRequestFields}" />
+						<apex:commandButton value="Submit" action="{!repliesListRequest}"
+							rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Replies Update Call -->
+					<apex:pageBlockSection id="gdriverepliesupdate" title="UPDATE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/replies/update">
+	                    		https://developers.google.com/drive/v2/reference/replies/update
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!repliesUpdateRequestFileId}" />
+						<apex:inputText label="Comment Id"
+							value="{!repliesUpdateRequestCommentId}" />
+						<apex:inputText label="Reply Id"
+							value="{!repliesUpdateRequestReplyId}" />
+						<apex:inputTextArea label="Content" rows="3"
+							value="{!repliesUpdateRequestContent}" />
+						<apex:selectRadio label="Verb" value="{!repliesUpdateRequestVerb}">
+							<apex:selectOptions value="{!replyActions}" />
+						</apex:selectRadio>
+						<apex:inputText label="Fields"
+							value="{!repliesUpdateRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!repliesUpdateRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+
+			<!-- Properties API Calls -->
+			<apex:actionRegion id="gdrivepropertyiesctionregion">
+				<apex:pageBlockSection id="gdriveproperties" title="Properties"
+					columns="2" collapsible="true">
+					<apex:outputLink
+						value="https://developers.google.com/drive/v2/reference/properties">
+	                    https://developers.google.com/drive/v2/reference/properties
+	                </apex:outputLink>
+					<apex:pageBlockSectionItem />
+
+					<!-- Properties Delete Call -->
+					<apex:pageBlockSection id="gdrivepropertiesdelete" title="DELETE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/properties/delete">
+	                    	https://developers.google.com/drive/v2/reference/properties/delete
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!propertiesDeleteRequestFileId}" />
+						<apex:inputText label="Property Key"
+							value="{!propertiesDeleteRequestPropertyKey}" />
+						<apex:inputText label="Visibility"
+							value="{!propertiesDeleteRequestVisibility}" />
+						<apex:inputText label="Fields"
+							value="{!propertiesDeleteRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!propertiesDeleteRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Properties Get Call -->
+					<apex:pageBlockSection id="gdrivepropertiesget" title="GET"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/properties/get">
+	                    	https://developers.google.com/drive/v2/reference/properties/get
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!propertiesGetRequestFileId}" />
+						<apex:inputText label="Property Key"
+							value="{!propertiesGetRequestPropertyKey}" />
+						<apex:inputText label="Visibility"
+							value="{!propertiesGetRequestVisibility}" />
+						<apex:inputText label="Fields"
+							value="{!propertiesGetRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!propertiesGetRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Properties Insert Call -->
+					<apex:pageBlockSection id="gdrivepropertiesinsert" title="INSERT"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/properties/insert">
+	                    		https://developers.google.com/drive/v2/reference/properties/insert
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!propertiesInsertRequestFileId}" />
+						<apex:inputText label="Property Key"
+							value="{!propertiesInsertRequestPropertyKey}" />
+						<apex:inputText label="Value"
+							value="{!propertiesInsertRequestValue}" />
+						<apex:inputText label="Visibility"
+							value="{!propertiesInsertRequestVisibility}" />
+						<apex:inputText label="Fields"
+							value="{!propertiesInsertRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!propertiesInsertRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Properties List Call -->
+					<apex:pageBlockSection id="gdrivepropertieslist" title="LIST"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/properties/list">
+	                    		https://developers.google.com/drive/v2/reference/properties/list
+	                    </apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!propertiesListRequestFileId}" />
+						<apex:inputText label="Fields"
+							value="{!propertiesListRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!propertiesListRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+
+					<!-- Properties Update Call -->
+					<apex:pageBlockSection id="gdrivepropertiesupdate" title="UPDATE"
+						columns="1" collapsible="false">
+						<apex:outputLink
+							value="https://developers.google.com/drive/v2/reference/properties/update">
+	                    		https://developers.google.com/drive/v2/reference/properties/update
+	                    	</apex:outputLink>
+						<apex:inputText label="File Id"
+							value="{!propertiesUpdateRequestFileId}" />
+						<apex:inputText label="Property Key"
+							value="{!propertiesUpdateRequestPropertyKey}" />
+						<apex:inputText label="Value"
+							value="{!propertiesUpdateRequestValue}" />
+						<apex:inputText label="Visibility"
+							value="{!propertiesUpdateRequestVisibility}" />
+						<apex:inputText label="Fields"
+							value="{!propertiesUpdateRequestFields}" />
+						<apex:commandButton value="Submit"
+							action="{!propertiesUpdateRequest}" rerender="messages" />
+					</apex:pageBlockSection>
+				</apex:pageBlockSection>
+			</apex:actionRegion>
+		</apex:pageblock>
+	</apex:form>
+</apex:page>

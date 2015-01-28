@@ -1,0 +1,91 @@
+<!-- 
+	VisualForce page that shows all the Attachments and Google Drive files for a given Account.
+	
+	This page allows users to transfer attachments to Google Drive and share them.
+ -->
+<apex:page standardController="Account"
+	extensions="GoogleDriveAccountController">
+	<apex:form>
+
+		<apex:pageBlock title="{!Account.Name}" id="accountPageBlock">
+
+			<apex:pageMessages />
+
+			<apex:variable var="attachmentRowNumber" value="{!0}" />
+			<apex:variable var="noteRowNumber" value="{!0}" />
+
+			<apex:pageBlockSection title="Account Attachments" columns="1"
+				collapsible="false">
+				<apex:pageBlockTable value="{!attachments}" var="att">
+
+					<apex:column headerValue="No."
+						style="width:20px; text-align:center;" headerClass="centertext">
+						<apex:outputText value="{0}" style="text-align:center;">
+							<apex:param value="{!attachmentRowNumber+1}" />
+						</apex:outputText>
+					</apex:column>
+
+					<apex:column headerValue="Name">
+						<apex:outputText value="{!att.Name}" />
+					</apex:column>
+
+					<apex:column headerValue="Action">
+
+						<apex:commandButton value="Transfer" rendered="{!validConnector}"
+							action="{!transferAttachmentToGoogleDrive}"
+							rerender="accountPageBlock" onComplete="">
+							<apex:param name="attachmentRowNumber"
+								value="{!attachmentRowNumber}" />
+						</apex:commandButton>
+
+						<apex:variable var="attachmentRowNumber"
+							value="{!attachmentRowNumber+1}" />
+					</apex:column>
+
+				</apex:pageBlockTable>
+
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection title="Account Google Drive Files" columns="1"
+				collapsible="false" id="AccountGoogleDriveFiles">
+				<apex:pageBlockTable value="{!notes}" var="note">
+
+					<apex:column headerValue="No."
+						style="width:20px; text-align:center;" headerClass="centertext">
+						<apex:outputText value="{0}" style="text-align:center;">
+							<apex:param value="{!noteRowNumber+1}" />
+						</apex:outputText>
+					</apex:column>
+
+					<apex:column headerValue="Name">
+						<apex:outputText value="{!note.Title}" />
+					</apex:column>
+
+					<apex:column headerValue="Action">
+
+						<apex:commandButton value="View" rendered="{!validConnector}"
+							action="{!viewFile}" rerender="accountPageBlock">
+							<apex:param name="noteRowNumber" value="{!noteRowNumber}" />
+						</apex:commandButton>
+
+						<apex:commandButton value="Share" rendered="{!validConnector}"
+							action="{!shareFileToAccountContacts}"
+							rerender="accountPageBlock">
+							<apex:param name="noteRowNumber" value="{!noteRowNumber}" />
+						</apex:commandButton>
+
+						<apex:commandButton value="Delete" rendered="{!validConnector}"
+							action="{!deleteFile}" rerender="accountPageBlock">
+							<apex:param name="noteRowNumber" value="{!noteRowNumber}" />
+						</apex:commandButton>
+
+						<apex:variable var="noteRowNumber" rendered="{!validConnector}"
+							value="{!noteRowNumber+1}" />
+					</apex:column>
+
+				</apex:pageBlockTable>
+
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

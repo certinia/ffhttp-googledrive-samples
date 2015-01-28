@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <webLinks>
+        <fullName>Move_Attachments_to_Google_Drive</fullName>
+        <availability>online</availability>
+        <description>Moves the selected attachments to Google Drive</description>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Move Attachments to Google Drive</masterLabel>
+        <openType>sidebar</openType>
+        <page>GoogleDriveMoveAccountAttachments</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>
