@@ -48,7 +48,7 @@ This section explains how to configure the Google Drive Sample Apps.
 17. Select an account from the **Accounts** tab.
     + The **Move Attachments to Google Drive** button should be displayed.
 
-###Create an app in Google
+### Create an app in Google
 
 1. Log in to your Google account.
 2. Go to https://console.developers.google.com/project and select **Create Project**.
@@ -63,7 +63,7 @@ This section explains how to configure the Google Drive Sample Apps.
 11. Select the **Consent screen**.
 12. Enter a **Product Name** and save.
 
-###Create a Google Drive Connector 
+### Create a Google Drive Connector 
 1. Log in to your Salesforce organisation.
 2. Go to the **Developer Console** and select **Debug** > **Open Execute Anonymous Window**.
 3. Run the following code changing the parameters to the appropriate values:
@@ -79,12 +79,12 @@ Use
 
 Once the project is configured:
 
-###Test Harness
+### Test Harness
 1. Select the **Test Harness** tab.
 2. Check that you get a message starting with 'Successful authentication'. If you do not, check that all the configuration steps have been peformed correctly.
 3. Expand any section to display the API calls, then select **Submit** to test the call.
 
-###Account Transfer Sample App
+### Account Transfer Sample App
 1. Select the **Accounts** tab and view an account.
 2. In the **Notes & Attachments** section select **Attach File**. Choose a file and attach it.
 3. Select the **Move Attachments to Google Drive** button.
