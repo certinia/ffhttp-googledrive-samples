@@ -112,8 +112,7 @@ public with sharing class GoogleDriveAccountController
     {
     	if (client == null)
     	{
-    		ffhttp_Client.Credentials credentials = new ffhttp_Client.Credentials(connectorService.connector.TokenType__c, 
-    																			  connectorService.getAccessToken());
+    		ffhttp_Client.ICredentials credentials = new ffhttp_Client.AccessTokenCredentials(connectorService.connector.TokenType__c,  connectorService.getAccessToken());
     		client = new ffhttp_GoogleDrive(credentials);
     	}
     	return client;
